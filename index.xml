@@ -1,26 +1,2 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on AlphaChow AI</title><link>https://alphachowai.com/</link><description>Recent content in Home on AlphaChow AI</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © AlphaChow AI</copyright><lastBuildDate>Thu, 30 Apr 2026 21:17:55 +0800</lastBuildDate><atom:link href="https://alphachowai.com/index.xml" rel="self" type="application/rss+xml"/><item><title>hello 至尊虾仁</title><link>https://alphachowai.com/posts/hello-%E8%87%B3%E5%B0%8A%E8%99%BE%E4%BB%81.html/</link><pubDate>Thu, 30 Apr 2026 21:17:55 +0800</pubDate><guid>https://alphachowai.com/posts/hello-%E8%87%B3%E5%B0%8A%E8%99%BE%E4%BB%81.html/</guid><description>&lt;p&gt;至尊虾仁&lt;/p&gt;</description></item><item><title>Hello World</title><link>https://alphachowai.com/posts/hello-world.html/</link><pubDate>Thu, 30 Apr 2026 15:30:00 +0800</pubDate><guid>https://alphachowai.com/posts/hello-world.html/</guid><description>&lt;p&gt;Hello world.&lt;/p&gt;
-&lt;p&gt;这是我的第一篇 Hugo 博客。&lt;/p&gt;</description></item><item><title>Demius 主题配置指南</title><link>https://alphachowai.com/posts/demius-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97.html/</link><pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate><guid>https://alphachowai.com/posts/demius-%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97.html/</guid><description>&lt;h2 id="-配置说明"&gt;📦 配置说明&lt;/h2&gt;
-&lt;h3 id="使用前准备"&gt;使用前准备&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;重要提示：&lt;/strong&gt; 本仓库是 Demius 主题的完整源码仓库，包含了一些与主题使用无关的文件，这些文件是为了让 Hugo 官方主题仓库定时拉取而创建的。在使用主题前，请删除以下文件：&lt;/p&gt;</description></item><item><title>关于我</title><link>https://alphachowai.com/about/</link><pubDate>Mon, 01 Jan 2024 00:00:00 +0000</pubDate><guid>https://alphachowai.com/about/</guid><description>&lt;h2 id="-个人简介"&gt;👋 个人简介&lt;/h2&gt;
-&lt;p&gt;欢迎来到我的博客！我是字·兮·书，一名热爱技术的开发者。&lt;/p&gt;
-&lt;p&gt;奶奶个腿儿，炸了啊炸了啊啊啊啊啊啊啊啊啊啊啊！&lt;/p&gt;
-&lt;h2 id="-技能专长"&gt;🛠️ 技能专长&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;前端开发&lt;/strong&gt;: HTML, CSS, JavaScript, Vue.js&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;后端开发&lt;/strong&gt;: Node.js, Python, Go&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;博客框架&lt;/strong&gt;: Hugo, Hexo&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;工具技能&lt;/strong&gt;: Git, Docker, Linux&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="-联系方式"&gt;📫 联系方式&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;📧 邮箱：demiusking@outlook.com&lt;/li&gt;
-&lt;li&gt;🐱 GitHub：&lt;a href="https://github.com/demius782"&gt;demius782&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;🌐 博客：&lt;a href="https://blog.demius.tech/"&gt;字·兮·书&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="-当前专注"&gt;🎯 当前专注&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Hugo 主题开发与优化&lt;/li&gt;
-&lt;li&gt;开源项目贡献&lt;/li&gt;
-&lt;li&gt;技术博客写作与分享&lt;/li&gt;
-&lt;li&gt;学习新的编程语言和框架&lt;/li&gt;
-&lt;/ul&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AlphaChow AI</title><link>https://alphachowai.com/</link><description>Recent content on AlphaChow AI</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © AlphaChow AI</copyright><lastBuildDate>Thu, 30 Apr 2026 21:17:55 +0800</lastBuildDate><atom:link href="https://alphachowai.com/index.xml" rel="self" type="application/rss+xml"/><item><title>hello 至尊虾仁</title><link>https://alphachowai.com/posts/hello-%E8%87%B3%E5%B0%8A%E8%99%BE%E4%BB%81.html/</link><pubDate>Thu, 30 Apr 2026 21:17:55 +0800</pubDate><guid>https://alphachowai.com/posts/hello-%E8%87%B3%E5%B0%8A%E8%99%BE%E4%BB%81.html/</guid><description>&lt;p&gt;至尊虾仁&lt;/p&gt;</description></item><item><title>Hello World</title><link>https://alphachowai.com/posts/hello-world.html/</link><pubDate>Thu, 30 Apr 2026 15:30:00 +0800</pubDate><guid>https://alphachowai.com/posts/hello-world.html/</guid><description>&lt;p&gt;Hello world.&lt;/p&gt;
+&lt;p&gt;这是我的第一篇 Hugo 博客。&lt;/p&gt;</description></item></channel></rss>
