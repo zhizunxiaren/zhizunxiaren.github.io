@@ -1,0 +1,58 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Demius 主题配置指南 | AlphaChow AI</title></head><body><main><a href=/>返回首页</a><h1>Demius 主题配置指南</h1><article><h2 id=-配置说明>📦 配置说明</h2><h3 id=使用前准备>使用前准备</h3><p><strong>重要提示：</strong> 本仓库是 Demius 主题的完整源码仓库，包含了一些与主题使用无关的文件，这些文件是为了让 Hugo 官方主题仓库定时拉取而创建的。在使用主题前，请删除以下文件：</p><ul><li><code>theme.toml</code> - 主题元数据文件（仅用于 Hugo 官方主题库）</li><li><code>images/</code> 目录 - 主题截图文件（仅用于 Hugo 官方主题库）</li><li><code>hugo.toml</code> - 这是主题仓库的示例配置文件，不是你的站点配置文件</li></ul><p><strong>注意：</strong></p><ul><li>你的站点配置文件应该在你自己的 Hugo 站点根目录下，而不是在主题目录中</li><li><code>hugo.toml</code> 和 <code>theme.toml</code> 的用处不同：<ul><li><code>hugo.toml</code> 是站点配置文件，用于配置你的 Hugo 站点</li><li><code>theme.toml</code> 是主题元数据文件，仅用于 Hugo 官方主题库展示主题信息</li></ul></li></ul><h3 id=必需页面文件>必需页面文件</h3><p>启用主题后，需要在站点根目录的 <code>content/</code> 目录下创建以下页面（示例文件在主题仓库的 <code>demius2/content/</code> 目录中，可直接复制使用）：</p><table><thead><tr><th>页面文件</th><th>说明</th><th>Front Matter 示例</th></tr></thead><tbody><tr><td><code>about.md</code></td><td>关于页面</td><td><code>type: "page"</code>, <code>layout: "single"</code></td></tr><tr><td><code>data.md</code></td><td>数据统计页面</td><td><code>type: "data"</code>, <code>layout: "data"</code></td></tr><tr><td><code>friends-circle.md</code></td><td>网友圈页面</td><td><code>type: "friends-circle"</code>, <code>layout: "friends-circle"</code></td></tr><tr><td><code>gallery.md</code></td><td>相册页面</td><td><code>type: "gallery"</code>, <code>layout: "gallery"</code></td></tr><tr><td><code>gear.md</code></td><td>装备页面</td><td><code>type: "gear"</code>, <code>layout: "gear"</code></td></tr><tr><td><code>links.md</code></td><td>友链页面</td><td><code>type: "links"</code>, <code>layout: "links"</code></td></tr><tr><td><code>message.md</code></td><td>留言板页面</td><td><code>type: "message"</code>, <code>layout: "message"</code></td></tr><tr><td><code>music-planet.md</code></td><td>音乐星球页面</td><td><code>type: "music-planet"</code>, <code>layout: "music-planet"</code></td></tr><tr><td><code>bangumi-planet.md</code></td><td>追番星球页面</td><td><code>type: "bangumi-planet"</code>, <code>layout: "bangumi-planet"</code></td></tr><tr><td><code>booklist.md</code></td><td>小说书单页面</td><td><code>type: "booklist"</code>, <code>layout: "booklist"</code></td></tr><tr><td><code>shuoshuo.md</code></td><td>说说页面</td><td><code>type: "shuoshuo"</code>, <code>layout: "shuoshuo"</code></td></tr><tr><td><code>supporters.md</code></td><td>支持者页面</td><td><code>type: "supporters"</code>, <code>layout: "supporters"</code></td></tr><tr><td><code>wishlist.md</code></td><td>愿望清单页面</td><td><code>type: "wishlist"</code>, <code>layout: "wishlist"</code></td></tr><tr><td><code>go.md</code></td><td>跳转中转页</td><td><code>layout: "go"</code></td></tr><tr><td><code>search/_index.md</code></td><td>搜索页面</td><td>标准搜索页配置</td></tr></tbody></table><p><strong>提示：</strong> 所有页面模板已包含在主题仓库的 <code>demius2/content/</code> 目录中，可直接复制到你的站点使用。</p><h3 id=必需数据文件>必需数据文件</h3><p>启用主题后，需要在站点根目录的 <code>data/</code> 目录下创建以下数据文件（示例文件在主题仓库的 <code>demius2/data/</code> 目录中，可直接复制使用）：</p><table><thead><tr><th>数据文件</th><th>说明</th><th>用途</th></tr></thead><tbody><tr><td><code>carousel.yaml</code></td><td>轮播图配置</td><td>首页轮播图数据源</td></tr><tr><td><code>gallery.yaml</code></td><td>相册数据</td><td>相册页面图片数据</td></tr><tr><td><code>gear.yaml</code></td><td>装备数据</td><td>装备页面展示数据</td></tr><tr><td><code>bangumi-planet.yaml</code></td><td>追番数据</td><td>追番星球页面数据</td></tr><tr><td><code>music-planet.yaml</code></td><td>音乐数据</td><td>音乐星球页面数据</td></tr><tr><td><code>wishlist.yaml</code></td><td>愿望清单数据</td><td>愿望清单页面数据</td></tr><tr><td><code>supporters.yaml</code></td><td>支持者数据</td><td>支持者页面数据</td></tr><tr><td><code>links.yaml</code></td><td>友链数据</td><td>友链页面数据</td></tr><tr><td><code>popup.yaml</code></td><td>弹窗配置</td><td>弹窗公告数据</td></tr></tbody></table><p><strong>提示：</strong> 所有数据文件模板已包含在主题仓库的 <code>demius2/data/</code> 目录中，可直接复制到你的站点使用。</p><h3 id=配置文件>配置文件</h3><p>主题的完整配置示例在主题仓库根目录的 <code>hugo.toml</code> 文件中，你可以参考该文件配置你的站点。主要配置项包括：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-toml data-lang=toml><span style=display:flex><span><span style=color:#a6e22e>baseURL</span> = <span style=color:#e6db74>&#34;https://example.com&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>languageCode</span> = <span style=color:#e6db74>&#34;zh-CN&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>title</span> = <span style=color:#e6db74>&#34;Demius Theme&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>theme</span> = <span style=color:#e6db74>&#34;demius&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[<span style=color:#a6e22e>module</span>.<span style=color:#a6e22e>hugoVersion</span>]
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>min</span> = <span style=color:#e6db74>&#34;0.146.0&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>extended</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[<span style=color:#a6e22e>params</span>]
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>homeColumns</span> = <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>darkMode</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>pjax</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>stickyHeader</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[<span style=color:#a6e22e>params</span>.<span style=color:#a6e22e>floatToolbar</span>]
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>enable</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>showImmersiveMode</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[<span style=color:#a6e22e>params</span>.<span style=color:#a6e22e>carousel</span>]
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>enable</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>showOnPages</span> = [<span style=color:#e6db74>&#34;home&#34;</span>]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[<span style=color:#a6e22e>params</span>.<span style=color:#a6e22e>topAnnouncement</span>]
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>enable</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>mode</span> = <span style=color:#e6db74>&#34;shuoshuo&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[<span style=color:#a6e22e>params</span>.<span style=color:#a6e22e>comment</span>]
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>enable</span> = <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>system</span> = <span style=color:#e6db74>&#34;artalk&#34;</span>
+</span></span></code></pre></div><p>更多配置请参考主题仓库根目录的 <code>hugo.toml</code> 文件，其中对每个模块都附带详细注释说明。</p><hr><h2 id=-开发说明>🛠️ 开发说明</h2><h3 id=使用-hugo-extended-版本推荐>使用 Hugo Extended 版本（推荐）</h3><p>如果你使用 <strong>Hugo Extended 版本</strong>，Hugo 会自动通过 Pipes 处理 CSS，无需任何额外操作。你可以<strong>直接删除 <code>yilai/</code> 文件夹</strong>，这些开发工具对你来说是不需要的。</p><h3 id=使用-hugo-非-extended-版本>使用 Hugo 非 Extended 版本</h3><p>如果你使用的是 <strong>Hugo 非 Extended 版本</strong>，由于 Hugo 无法自动处理 CSS 中的 <code>@import</code> 语句，你需要使用 <code>yilai/</code> 文件夹中的工具来合并 CSS 文件：</p><ol><li><p><strong>安装 Node.js 依赖</strong>：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>cd yilai
+</span></span><span style=display:flex><span>npm install
+</span></span></code></pre></div></li><li><p><strong>合并 CSS 文件</strong>：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>npm run build:css
+</span></span></code></pre></div><p>这个命令会将 <code>assets/css/main.css</code> 中的所有 <code>@import</code> 语句合并，生成 <code>assets/css/main-merged.css</code> 文件。</p></li><li><p><strong>修改主题布局文件</strong>（如果需要）：
+如果主题使用了 <code>main.css</code>，你可能需要修改布局文件，将引用改为 <code>main-merged.css</code>。或者，你可以直接使用合并后的 CSS 文件替换原文件。</p></li></ol><p><strong>注意：</strong> 每次修改 CSS 文件后，都需要重新运行 <code>npm run build:css</code> 来更新合并后的 CSS 文件。</p><h3 id=开发主题>开发主题</h3><p>如果你需要修改主题代码或进行主题开发，可以使用 <code>yilai/</code> 文件夹中的依赖文件进行 CSS 处理和构建。</p><hr><h2 id=-仓库结构说明>📁 仓库结构说明</h2><pre tabindex=0><code>demius-blog/                    # 主题源码仓库根目录
+├── archetypes/                 # 默认 Front Matter 模板
+├── assets/                     # 原子化 CSS / JS
+├── layouts/                    # 页面、分区、短代码与组件
+├── static/                     # 主题内置静态资源（图标、音频、avatar 等）
+├── content/                    # 示例内容（可选，用于主题开发测试）
+├── data/                       # 示例数据（可选，用于主题开发测试）
+├── hugo.toml                   # 主题示例配置（参考用，不要直接使用）
+├── theme.toml                  # 主题元数据（仅用于 Hugo 官方主题库，可删除）
+├── demius2/                    # 示例页面和数据文件（可选）
+│   ├── content/                # 示例页面内容
+│   └── data/                   # 示例数据文件
+├── yilai/                      # 开发工具（与主题使用无关）
+│   ├── package.json            # Node.js 依赖配置（仅开发用）
+│   ├── package-lock.json       # Node.js 依赖锁定文件
+│   ├── postcss.config.js       # PostCSS 配置（仅开发用）
+│   ├── go.mod                  # Go 模块配置（仅开发用）
+│   └── scripts/                # CSS 合并脚本（仅开发用）
+├── images/                     # 主题截图（Hugo 官方主题库需要，可删除）
+│   ├── screenshot.png          # 主题截图
+│   └── tn.png                  # 缩略图
+├── LICENSE                     # MIT 许可证
+└── README.md                   # 当前文档
+</code></pre><blockquote><p><strong>注意</strong>：<code>yilai/</code> 文件夹包含开发工具（Node.js 依赖、PostCSS 配置等），这些文件与主题的<strong>使用</strong>无关。主题使用 Hugo Pipes 自动处理 CSS，如果使用 Hugo Extended 版本，<strong>可以删除 <code>yilai/</code> 文件夹</strong>。这些文件仅对<strong>开发主题</strong>或<strong>使用非 Extended 版本的 Hugo</strong> 有用。</p></blockquote></article></main></body></html>
