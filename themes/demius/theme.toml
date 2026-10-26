@@ -1,0 +1,17 @@
+name = "Demius"
+license = "MIT"
+licenselink = "https://github.com/demius782/demius-blog/blob/main/LICENSE"
+description = "Modern three-column Masonry Hugo theme with data widgets and PJAX. Demius ships ready-to-use configuration templates and shortcodes for showcasing blog posts, status updates, data dashboards, galleries, music/anime/wish lists on a single site."
+homepage = "https://github.com/demius782/demius-blog"
+tags = ["blog", "responsive", "multilingual", "pagination", "disqus", "google-analytics", "rss", "search", "dark-mode", "pjax", "gallery", "music", "animation"]
+features = ["responsive", "multilingual", "pagination", "disqus", "google-analytics", "rss", "search", "dark-mode", "pjax", "gallery", "music", "animation"]
+min_version = "0.146.0"
+
+[author]
+  name = "demius782"
+  homepage = "https://github.com/demius782"
+
+[screenshot]
+  src = "images/screenshot.png"
+  thumbnail = "images/tn.png"
+

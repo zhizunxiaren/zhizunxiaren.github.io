@@ -1,0 +1,13 @@
+# 构建产物
+public/
+dist/
+resources/_gen/
+
+# 依赖（首次使用需 npm install）
+node_modules/
+
+# 系统与编辑器
+.hugo_build.lock
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="{{ if site.Params.darkMode }}dark{{ else }}light{{ end }}"{{ if site.Params.grayscaleMode }} class="grayscale-mode"{{ end }}>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}{{ end }}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="author" content="{{ .Site.Params.author }}">
+    <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+    
+    {{ with .Site.Params.images.favicon }}
+    <link rel="icon" href="{{ . | relURL }}" type="image/x-icon">
+    {{ end }}
+    
+    {{ with resources.Get "css/main.css" | postCSS | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
+    {{ with resources.Get "css/_home-big-image.css" | postCSS | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
+    {{ if site.Params.popup.enable }}
+    {{ with resources.Get "css/_popup.css" | postCSS | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
+    {{ end }}
+    {{ if site.Params.linkCard.enable }}
+    {{ with resources.Get "css/_link-card.css" | postCSS | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
+    {{ end }}
+    {{ if site.Params.grayscaleMode }}
+    {{ with resources.Get "css/_grayscale.css" | postCSS | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
+    {{ end }}
+    {{ if site.Params.particleEffect.enable }}
+    {{ with resources.Get "css/_particle-effect.css" | postCSS | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{ end }}
+    {{ end }}
+    <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free/css/all.min.css">
+
+    {{/* KaTeX 支持（用于渲染正文里的 `$...$` / `$$...$$` 行内/行间公式） */}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    
+    {{/* 自定义字体加载 */}}
+    {{ if and .Site.Params.font.enable (eq .Site.Params.font.type "online") .Site.Params.font.onlineUrl }}
+    {{ if hasPrefix .Site.Params.font.onlineUrl "https://fonts.googleapis.com" }}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {{ end }}
+    <link href="{{ .Site.Params.font.onlineUrl }}" rel="stylesheet">
+    {{ end }}
+    {{ if and .Site.Params.font.enable (eq .Site.Params.font.type "local") .Site.Params.font.localPath }}
+    <style>
+      @font-face {
+        font-family: '{{ .Site.Params.font.localName }}';
+        font-style: normal;
+        font-display: swap;
+        src: url('{{ .Site.Params.font.localPath }}') format('{{ if eq .Site.Params.font.localFormat "ttf" }}truetype{{ else }}{{ .Site.Params.font.localFormat }}{{ end }}');
+      }
+    </style>
+    {{ end }}
+    
+    {{/* 评论系统资源（提前加载，确保PJAX切换时可用） */}}
+    {{ if and site.Params.comment.enable (eq site.Params.comment.system "artalk") }}
+      {{ if site.Params.comment.artalk.useLocal }}
+        {{- $css := resources.Get "lib/artalk/Artalk.css" }}
+        {{- $js := resources.Get "lib/artalk/Artalk.js" }}
+        {{ if and $css $js }}
+          <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+          <script defer src="{{ $js.RelPermalink }}"></script>
+        {{ else }}
+          <link rel="stylesheet" href="https://unpkg.com/artalk@2.8.5/dist/Artalk.css">
+          <script defer src="https://unpkg.com/artalk@2.8.5/dist/Artalk.js"></script>
+        {{ end }}
+      {{ else }}
+        {{ $cdn := index site.Params.comment.artalk.cdn (site.Params.comment.artalk.cdnIndex | default 0) }}
+        <link rel="stylesheet" href="{{ $cdn.css }}">
+        <script defer src="{{ $cdn.js }}"></script>
+      {{ end }}
+    {{ end }}
+    
+    {{/* Umami统计脚本 */}}
+    {{ if and site.Params.analytics.umami.enable site.Params.analytics.umami.scriptUrl site.Params.analytics.umami.websiteId }}
+    <script defer src="{{ site.Params.analytics.umami.scriptUrl }}" data-website-id="{{ site.Params.analytics.umami.websiteId }}"></script>
+    {{ end }}
+    
+    {{/* APlayer 和 MetingJS (音乐播放器) - 支持备用CDN */}}
+    <script>
+      // APlayer 和 MetingJS 动态加载，支持备用CDN
+      (function() {
+        const aplayerCSS = [
+          'https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css',
+          'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css'
+        ];
+        
+        const aplayerJS = [
+          'https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js',
+          'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js'
+        ];
+        
+        const metingCDNs = [
+          'https://unpkg.com/meting@2/dist/Meting.min.js',
+          'https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js'
+        ];
+        
+        let cssIndex = 0;
+        let jsIndex = 0;
+        let metingIndex = 0;
+        
+        // 加载APlayer CSS
+        function loadAPlayerCSS() {
+          if (cssIndex >= aplayerCSS.length) {
+            console.error('[音乐播放器] APlayer CSS所有CDN加载失败');
+            loadAPlayerJS(); // 即使CSS失败也尝试加载JS
+            return;
+          }
+          
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = aplayerCSS[cssIndex];
+          link.onerror = function() {
+            cssIndex++;
+            loadAPlayerCSS();
+          };
+          link.onload = function() {
+            loadAPlayerJS();
+          };
+          document.head.appendChild(link);
+        }
+        
+        // 加载APlayer JS
+        function loadAPlayerJS() {
+          if (jsIndex >= aplayerJS.length) {
+            console.error('[音乐播放器] APlayer JS所有CDN加载失败，音乐播放器可能无法正常工作');
+            return;
+          }
+          
+          const script = document.createElement('script');
+          script.src = aplayerJS[jsIndex];
+          script.onerror = function() {
+            jsIndex++;
+            loadAPlayerJS();
+          };
+          script.onload = function() {
+            // APlayer加载成功后，加载MetingJS
+            loadMetingJS();
+          };
+          document.head.appendChild(script);
+        }
+        
+        // 加载MetingJS
+        function loadMetingJS() {
+          if (metingIndex >= metingCDNs.length) {
+            console.error('[音乐播放器] MetingJS所有CDN加载失败');
+            return;
+          }
+          
+          const script = document.createElement('script');
+          script.src = metingCDNs[metingIndex];
+          script.onerror = function() {
+            metingIndex++;
+            loadMetingJS();
+          };
+          script.onload = function() {
+            // 加载成功，触发自定义事件通知
+            window.dispatchEvent(new CustomEvent('metingjs:loaded'));
+          };
+          document.head.appendChild(script);
+        }
+        
+        // 开始加载
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadAPlayerCSS);
+        } else {
+          loadAPlayerCSS();
+        }
+      })();
+    </script>
+    
+    {{/* 注入站点配置到JavaScript */}}
+    <script>
+      window.siteConfig = {
+        pjaxEnabled: '{{ .Site.Params.pjax }}',
+        artalkServer: '{{ .Site.Params.comment.artalk.server }}',
+        artalkSite: '{{ .Site.Params.comment.artalk.site }}',
+        {{/* 置顶徽章图标和文字颜色配置 */}}
+        {{ with .Site.Params.pinned.iconColor }}
+        pinnedIconColor: '{{ . }}',
+        {{ end }}
+        {{ with .Site.Params.pinned.textColor }}
+        pinnedTextColor: '{{ . }}',
+        {{ end }}
+        {{ with .Site.Params.pinned.iconColorDark }}
+        pinnedIconColorDark: '{{ . }}',
+        {{ end }}
+        {{ with .Site.Params.pinned.textColorDark }}
+        pinnedTextColorDark: '{{ . }}',
+        {{ end }}
+        {{/* 加密功能配置 */}}
+        encryption: {
+          {{ with .Site.Params.encryption.fullHint }}
+          fullHint: '{{ . }}',
+          {{ end }}
+          {{ with .Site.Params.encryption.partialHint }}
+          partialHint: '{{ . }}',
+          {{ end }}
+          {{ with .Site.Params.encryption.wrongPasswordHint }}
+          wrongPasswordHint: '{{ . }}',
+          {{ end }}
+          popupTextColor: '{{ .Site.Params.encryption.popupTextColor | default "" }}',
+          popupBackgroundColor: '{{ .Site.Params.encryption.popupBackgroundColor | default "" }}',
+          popupBackgroundImage: '{{ .Site.Params.encryption.popupBackgroundImage | default "" }}',
+          partialPopupTextColor: '{{ .Site.Params.encryption.partialPopupTextColor | default "" }}',
+          partialPopupBackgroundColor: '{{ .Site.Params.encryption.partialPopupBackgroundColor | default "" }}',
+          partialPopupBackgroundImage: '{{ .Site.Params.encryption.partialPopupBackgroundImage | default "" }}'
+        },
+        {{/* 弹幕功能配置 */}}
+        danmaku: {
+          enable: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "enable" }}{{ .Site.Params.danmaku.enable }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+          scope: '{{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "scope" }}{{ .Site.Params.danmaku.scope }}{{ else }}all{{ end }}{{ else }}all{{ end }}',
+          speed: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "speed" }}{{ .Site.Params.danmaku.speed }}{{ else }}3{{ end }}{{ else }}3{{ end }},
+          fontSize: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "fontSize" }}{{ .Site.Params.danmaku.fontSize }}{{ else }}16{{ end }}{{ else }}16{{ end }},
+          opacity: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "opacity" }}{{ .Site.Params.danmaku.opacity }}{{ else }}0.9{{ end }}{{ else }}0.9{{ end }},
+          maxCount: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "maxCount" }}{{ .Site.Params.danmaku.maxCount }}{{ else }}50{{ end }}{{ else }}50{{ end }},
+          updateInterval: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "updateInterval" }}{{ .Site.Params.danmaku.updateInterval }}{{ else }}30000{{ end }}{{ else }}30000{{ end }},
+          showAvatar: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "showAvatar" }}{{ .Site.Params.danmaku.showAvatar }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+          showTime: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "showTime" }}{{ .Site.Params.danmaku.showTime }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+          loop: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "loop" }}{{ .Site.Params.danmaku.loop }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+          randomPosition: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "randomPosition" }}{{ .Site.Params.danmaku.randomPosition }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+          colorful: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "colorful" }}{{ .Site.Params.danmaku.colorful }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+          antiOverlap: {{ if isset .Site.Params "danmaku" }}{{ if isset .Site.Params.danmaku "antiOverlap" }}{{ .Site.Params.danmaku.antiOverlap }}{{ else }}true{{ end }}{{ else }}true{{ end }}
+        },
+        {{/* 当前页面信息 */}}
+        currentPage: {
+          url: '{{ .Permalink }}',
+          title: '{{ .Title }}',
+          type: '{{ .Type }}',
+          kind: '{{ .Kind }}'
+        }
+      };
+      
+      // 立即设置置顶徽章CSS变量
+      (function() {
+        {{ with .Site.Params.pinned.iconColor }}
+        document.documentElement.style.setProperty('--pinned-icon-color', '{{ . }}');
+        {{ end }}
+        {{ with .Site.Params.pinned.textColor }}
+        document.documentElement.style.setProperty('--pinned-text-color', '{{ . }}');
+        {{ end }}
+        {{ with .Site.Params.pinned.iconColorDark }}
+        document.documentElement.style.setProperty('--pinned-icon-color-dark', '{{ . }}');
+        {{ end }}
+        {{ with .Site.Params.pinned.textColorDark }}
+        document.documentElement.style.setProperty('--pinned-text-color-dark', '{{ . }}');
+        {{ end }}
+      })();
+    </script>
+    
+    {{ block "head" . }}{{ end }}
+  </head>
+  
+<body{{ if .IsHome }} class="home"{{ else if .IsPage }}{{ if eq .Type "posts" }} class="single-post"{{ end }}{{ end }}>
+  {{ partial "header/header.html" . }}
+  
+  {{/* 顶部公告栏组件 */}}
+  {{ if .Site.Params.topAnnouncement.enable }}
+    {{ partial "components/top-announcement.html" . }}
+  {{ end }}
+
+  <!-- 统一骨架：左右侧栏 + 中间内容。所有页面只需定义 block "content" -->
+  <div class="site-wrap">
+    {{ if .Site.Params.aside.left }}
+      <aside class="site-aside-left{{ if .Site.Params.aside.unifiedMode }} aside-unified{{ end }}{{ if .Site.Params.aside.transparentMode }} aside-transparent{{ end }}">
+        {{ $currentPage := . }}
+        {{ range .Site.Params.aside.left }}
+          {{ if or (eq . "toc") (eq . "related-Posts") }}
+            {{ partial (printf "aside/widgets/%s.html" .) $currentPage }}
+          {{ else }}
+            {{ partialCached (printf "aside/widgets/%s.html" .) $ }}
+          {{ end }}
+        {{ end }}
+      </aside>
+    {{ end }}
+
+    <main class="site-main">
+      {{/* 轮播图组件 - 在主内容区域开头 */}}
+      {{ partial "components/carousel.html" . }}
+      
+      {{ block "content" . }}{{ end }}
+    </main>
+
+    {{ if .Site.Params.aside.right }}
+      <aside class="site-aside-right{{ if .Site.Params.aside.unifiedMode }} aside-unified{{ end }}{{ if .Site.Params.aside.transparentMode }} aside-transparent{{ end }}">
+        {{ $currentPage := . }}
+        {{ range .Site.Params.aside.right }}
+          {{ if or (eq . "toc") (eq . "related-Posts") }}
+            {{ partial (printf "aside/widgets/%s.html" .) $currentPage }}
+          {{ else }}
+            {{ partialCached (printf "aside/widgets/%s.html" .) $ }}
+          {{ end }}
+        {{ end }}
+      </aside>
+    {{ end }}
+  </div>
+
+  {{ partial "footer/footer.html" . }}
+  {{ partial "components/float-buttons.html" . }}
+  {{ partial "components/search-modal.html" . }}
+  {{ partial "components/music-player-float.html" . }}
+  
+  {{/* 开发者工具防护配置（如果启用，必须在其他脚本之前加载） */}}
+  {{ if .Site.Params.devToolsProtection.enabled }}
+  <script>
+    window.devToolsProtectionConfig = {
+      enabled: {{ .Site.Params.devToolsProtection.enabled | default false }},
+      disableRightClick: {{ .Site.Params.devToolsProtection.disableRightClick | default true }},
+      disableTextSelection: {{ .Site.Params.devToolsProtection.disableTextSelection | default false }},
+      detectDevTools: {{ .Site.Params.devToolsProtection.detectDevTools | default true }},
+      devToolsThreshold: {{ .Site.Params.devToolsProtection.devToolsThreshold | default 160 }},
+      disableConsole: {{ .Site.Params.devToolsProtection.disableConsole | default false }},
+      disableDebugger: {{ .Site.Params.devToolsProtection.disableDebugger | default false }},
+      preventIframe: {{ .Site.Params.devToolsProtection.preventIframe | default true }},
+      onDevToolsOpen: {{ .Site.Params.devToolsProtection.onDevToolsOpen | default "none" | jsonify }},
+      redirectUrl: {{ .Site.Params.devToolsProtection.redirectUrl | default "/" | jsonify }}
+    };
+  </script>
+  {{ with resources.Get "js/_devtools-protection.js" | js.Build | minify | fingerprint }}
+    <script src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  {{ end }}
+  
+  {{ with resources.Get "js/main.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  
+  {{ with resources.Get "js/_home-big-image.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  
+  {{ with resources.Get "js/_background.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  
+  {{ with resources.Get "js/_post-views.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  
+  {{ with resources.Get "js/_post-reading-time.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  
+  {{/* 顶部公告栏脚本 */}}
+  {{ if .Site.Params.topAnnouncement.enable }}
+  {{ with resources.Get "js/_top-announcement.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  {{ end }}
+  
+  {{ if .Site.Params.pjax }}
+  {{ with resources.Get "js/_simple-pjax.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  {{ end }}
+  
+  {{/* 网友圈脚本（全局加载，确保PJAX切换时可调用） */}}
+  {{ with resources.Get "js/_friends-circle.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ .RelPermalink }}"></script>
+  {{ end }}
+  
+  {{/* 评论系统首次初始化脚本（非PJAX环境） */}}
+  {{ if and site.Params.comment.enable (eq site.Params.comment.system "artalk") }}
+  <script>
+    // 首次加载时初始化评论（仅在非PJAX或直接访问时）
+    document.addEventListener('DOMContentLoaded', function() {
+      const commentEl = document.getElementById('artalk-comment');
+      if (!commentEl || typeof Artalk === 'undefined') {
+        return;
+      }
+      
+      try {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const isDarkMode = currentTheme === 'dark';
+        
+        const artalkInstance = Artalk.init({
+          el: '#artalk-comment',
+          pageKey: window.location.pathname,
+          pageTitle: document.title,
+          server: '{{ site.Params.comment.artalk.server }}',
+          site: '{{ site.Params.comment.artalk.site }}',
+          placeholder: '{{ site.Params.comment.artalk.placeholder }}',
+          darkMode: isDarkMode,
+          locale: '{{ site.Params.comment.artalk.locale }}',
+          gravatar: { params: '{{ site.Params.comment.artalk.gravatar }}' },
+          pagination: { pageSize: {{ site.Params.comment.artalk.pageSize }} },
+          emoticons: {{ site.Params.comment.artalk.emoticons }},
+          heightLimit: {{ site.Params.comment.artalk.heightLimit }}
+        });
+        
+        // 监听主题变化
+        const observer = new MutationObserver(() => {
+          const newTheme = document.documentElement.getAttribute('data-theme');
+          const newDarkMode = newTheme === 'dark';
+          try {
+            artalkInstance.setDarkMode(newDarkMode);
+          } catch (err) {
+            // 同步Artalk主题时出现异常，静默处理
+          }
+        });
+        
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme']
+        });
+      } catch (error) {
+        console.error('评论系统初始化失败:', error);
+      }
+    });
+  </script>
+  {{ end }}
+  
+  <!-- 背景图配置 -->
+  <script>
+        // 合并配置，而不是覆盖（保留第一次定义的加密配置）
+        if (!window.siteConfig) {
+          window.siteConfig = {};
+        }
+        Object.assign(window.siteConfig, {
+          siteBackgroundEnabled: '{{ .Site.Params.background.site.enable | default "true" }}',
+          siteBackgroundImage: '{{ .Site.Params.background.site.image }}',
+          siteBackgroundBlur: '{{ .Site.Params.background.site.blur | default "0" }}',
+          siteBackgroundBrightness: '{{ .Site.Params.background.site.brightness | default "100" }}',
+          siteBackgroundOpacity: '{{ .Site.Params.background.site.opacity | default "80" }}',
+          {{/* 手机端目录按钮弹出模式配置 */}}
+          mobileTocPopupMode: '{{ .Site.Params.aside.toc.mobilePopupMode | default "sidebar" }}',
+          effectMode: '{{ .Site.Params.background.effect_mode | default "glass" }}',
+          solidColor: '{{ .Site.Params.background.solid_color | default "#4fc3f7" }}',
+          // 新增主页大图配置
+          homeBigImageEnabled: '{{ .Site.Params.homeBigImage.enable | default "false" }}',
+          homeBigImageMode: '{{ .Site.Params.homeBigImage.mode | default "mode1" }}',
+          homeBigImageTitle: '{{ .Site.Params.homeBigImage.title }}',
+          homeBigImageSubtitle: '{{ .Site.Params.homeBigImage.subtitle }}',
+          homeBigImageMode1BackgroundImage: '{{ .Site.Params.homeBigImage.mode1.backgroundImage }}',
+          homeBigImageMode1ArrowAnimation: '{{ .Site.Params.homeBigImage.mode1.arrowAnimation | default "false" }}',
+          homeBigImageMode1ScrollSpeed: '{{ .Site.Params.homeBigImage.mode1.scrollSpeed | default "500" }}',
+          homeBigImageMode1CardAnimation: '{{ .Site.Params.homeBigImage.mode1.cardAnimation | default "true" }}',
+          homeBigImageMode1CardAnimationSpeed: '{{ .Site.Params.homeBigImage.mode1.cardAnimationSpeed | default "normal" }}',
+          homeBigImageMode2FullScreen: '{{ .Site.Params.homeBigImage.mode2.fullScreen | default "true" }}',
+          homeBigImageMode2OverlayOpacity: '{{ .Site.Params.homeBigImage.mode2.overlayOpacity | default "0.3" }}',
+          homeBigImageMode2CustomBackgroundImage: '{{ .Site.Params.homeBigImage.mode2.customBackgroundImage }}',
+          // 打字机效果配置
+          typewriterEnable: '{{ .Site.Params.homeBigImage.mode2.typewriterEnable | default "false" }}',
+          typewriterSpeed: '{{ .Site.Params.homeBigImage.mode2.typewriterSpeed | default "100" }}',
+          typewriterDelay: '{{ .Site.Params.homeBigImage.mode2.typewriterDelay | default "1000" }}',
+          typewriterCursor: '{{ .Site.Params.homeBigImage.mode2.typewriterCursor | default "true" }}',
+          typewriterLoop: '{{ .Site.Params.homeBigImage.mode2.typewriterLoop | default "false" }}',
+          // 无刷新切换配置（如果第一次定义中已存在，这里会覆盖）
+          pjaxEnabled: '{{ .Site.Params.pjax | default "false" }}',
+          // Artalk评论系统配置（如果第一次定义中已存在，这里会覆盖）
+          artalkServer: '{{ .Site.Params.comment.artalk.server | default "https://site.demius.tech" }}',
+          artalkSite: '{{ .Site.Params.comment.artalk.site | default "demius" }}',
+          // Umami统计配置（文章浏览量）
+          umamiApiUrl: '{{ .Site.Params.analytics.umami.apiUrl | default "" }}',
+          umamiUseForPostViews: {{ if .Site.Params.analytics.umami.useForPostViews }}{{ .Site.Params.analytics.umami.useForPostViews }}{{ else }}true{{ end }},
+          // 粒子特效配置
+          particleEffectEnable: '{{ .Site.Params.particleEffect.enable | default "false" }}',
+          particleEffectCount: '{{ .Site.Params.particleEffect.count | default "80" }}',
+          particleEffectColor: '{{ .Site.Params.particleEffect.color | default "" }}',
+          particleEffectLineColor: '{{ .Site.Params.particleEffect.lineColor | default "" }}',
+          particleEffectLineDistance: '{{ .Site.Params.particleEffect.lineDistance | default "150" }}',
+          particleEffectSpeed: '{{ .Site.Params.particleEffect.speed | default "0.5" }}',
+          particleEffectRadius: '{{ .Site.Params.particleEffect.radius | default "1.5" }}',
+          particleEffectInteractive: '{{ .Site.Params.particleEffect.interactive | default "true" }}',
+          particleEffectZIndex: '{{ .Site.Params.particleEffect.zIndex | default "0" }}',
+          umamiWebsiteId: '{{ .Site.Params.analytics.umami.websiteId | default "" }}',
+          // 导航栏固定配置
+          stickyHeader: {{ .Site.Params.stickyHeader | default false }},
+          // 侧栏宽度模式配置
+          asideWideMode: {{ if .Site.Params.aside.wideMode }}{{ if eq (printf "%T" .Site.Params.aside.wideMode) "string" }}'{{ .Site.Params.aside.wideMode }}'{{ else }}{{ .Site.Params.aside.wideMode }}{{ end }}{{ else }}false{{ end }},
+          // 字体配置
+          fontEnable: {{ .Site.Params.font.enable | default false }},
+          fontType: '{{ .Site.Params.font.type | default "online" }}',
+          fontOnlineUrl: '{{ .Site.Params.font.onlineUrl | default "" }}',
+          fontFamily: '{{ .Site.Params.font.fontFamily | default "" }}',
+          fontLocalName: '{{ .Site.Params.font.localName | default "" }}',
+          fontLocalPath: '{{ .Site.Params.font.localPath | default "" }}',
+          fontLocalFormat: '{{ .Site.Params.font.localFormat | default "woff2" }}',
+          // 顶部公告栏配置
+          topAnnouncement: {
+            enable: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "enable" }}{{ .Site.Params.topAnnouncement.enable }}{{ else }}false{{ end }}{{ else }}false{{ end }},
+            mode: '{{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "mode" }}{{ .Site.Params.topAnnouncement.mode }}{{ else }}custom{{ end }}{{ else }}custom{{ end }}',
+            height: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "height" }}{{ .Site.Params.topAnnouncement.height }}{{ else }}40{{ end }}{{ else }}40{{ end }},
+            shuoshuo: {
+              apiUrl: '{{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "apiUrl" }}{{ .Site.Params.topAnnouncement.shuoshuo.apiUrl }}{{ else }}{{ end }}{{ else }}{{ end }}{{ else }}{{ end }}',
+              count: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "count" }}{{ .Site.Params.topAnnouncement.shuoshuo.count }}{{ else }}3{{ end }}{{ else }}3{{ end }}{{ else }}3{{ end }},
+              interval: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "interval" }}{{ .Site.Params.topAnnouncement.shuoshuo.interval }}{{ else }}5000{{ end }}{{ else }}5000{{ end }}{{ else }}5000{{ end }},
+              transitionDuration: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "transitionDuration" }}{{ .Site.Params.topAnnouncement.shuoshuo.transitionDuration }}{{ else }}500{{ end }}{{ else }}500{{ end }}{{ else }}500{{ end }},
+              showAvatar: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "showAvatar" }}{{ .Site.Params.topAnnouncement.shuoshuo.showAvatar }}{{ else }}true{{ end }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+              showTime: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "showTime" }}{{ .Site.Params.topAnnouncement.shuoshuo.showTime }}{{ else }}true{{ end }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+              cacheDuration: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "cacheDuration" }}{{ .Site.Params.topAnnouncement.shuoshuo.cacheDuration }}{{ else }}1800000{{ end }}{{ else }}1800000{{ end }}{{ else }}1800000{{ end }},
+              clickable: {{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "clickable" }}{{ .Site.Params.topAnnouncement.shuoshuo.clickable }}{{ else }}true{{ end }}{{ else }}true{{ end }}{{ else }}true{{ end }},
+              shuoshuoPageUrl: '{{ if isset .Site.Params "topAnnouncement" }}{{ if isset .Site.Params.topAnnouncement "shuoshuo" }}{{ if isset .Site.Params.topAnnouncement.shuoshuo "shuoshuoPageUrl" }}{{ .Site.Params.topAnnouncement.shuoshuo.shuoshuoPageUrl }}{{ else }}/shuoshuo/{{ end }}{{ else }}/shuoshuo/{{ end }}{{ else }}/shuoshuo/{{ end }}'
+            }
+          },
+          // 链接卡片和跳转中转配置
+          linkCard: {
+            enable: {{ .Site.Params.linkCard.enable | default false }},
+            cardMode: '{{ .Site.Params.linkCard.cardMode | default "external" }}',
+            openInNewTab: {{ .Site.Params.linkCard.openInNewTab | default true }},
+            showArticleInfo: {{ .Site.Params.linkCard.showArticleInfo | default true }},
+            showArticleTitle: {{ .Site.Params.linkCard.showArticleTitle | default true }},
+            showArticleDate: {{ .Site.Params.linkCard.showArticleDate | default true }},
+            showArticleSummary: {{ .Site.Params.linkCard.showArticleSummary | default true }},
+            redirectPage: {{ .Site.Params.linkCard.redirectPage | default true }},
+            replaceWhitelist: {{ .Site.Params.linkCard.replaceWhitelist | default (slice) | jsonify }},
+            pageWhitelist: {{ .Site.Params.linkCard.pageWhitelist | default (slice) | jsonify }},
+            elementWhitelist: {{ .Site.Params.linkCard.elementWhitelist | default (slice) | jsonify }},
+            redirectWhitelist: {{ .Site.Params.linkCard.redirectWhitelist | default (slice) | jsonify }},
+            redirect: {
+              pagePath: '{{ .Site.Params.linkCard.redirect.pagePath | default "/go.html" }}',
+              countdown: {{ .Site.Params.linkCard.redirect.countdown | default 3 }},
+              showCountdown: {{ .Site.Params.linkCard.redirect.showCountdown | default true }},
+              showButton: {{ .Site.Params.linkCard.redirect.showButton | default true }},
+              safeMessage: '{{ .Site.Params.linkCard.redirect.safeMessage | default "😃 来自本站，本站可确保其安全性，请放心点击跳转" }}'
+            }
+          }
+        });
+        
+        // 设置侧栏宽度CSS变量的全局函数
+        window.setAsideWidth = function() {
+          if (!window.siteConfig) return;
+          
+          const mode = window.siteConfig.asideWideMode;
+          let asideWidth = '260px'; // 默认宽度
+          
+          // 将模式转换为字符串并去除引号（处理Hugo模板可能添加的引号）
+          const modeStr = String(mode).replace(/^["']|["']$/g, '').toLowerCase();
+          
+          // 支持多种配置方式：字符串、布尔值
+          if (mode === true || modeStr === 'true' || modeStr === 'wide') {
+            asideWidth = '415px'; // 超宽模式
+          } else if (modeStr === 'medium') {
+            asideWidth = '332px'; // 中宽模式
+          } else {
+            // 默认模式：false, 'false', 'normal', 'default' 或未定义
+            asideWidth = '260px';
+          }
+          
+          document.documentElement.style.setProperty('--aside-width', asideWidth);
+        };
+        
+        // 立即执行一次
+        window.setAsideWidth();
+        
+        // 设置全站字体的全局函数
+        window.setFontFamily = function() {
+          if (!window.siteConfig) {
+            console.warn('setFontFamily: siteConfig not found');
+            return;
+          }
+          
+          // 检查是否启用字体
+          const fontEnable = window.siteConfig.fontEnable === true || 
+                            window.siteConfig.fontEnable === 'true' || 
+                            String(window.siteConfig.fontEnable).toLowerCase() === 'true';
+          
+          if (!fontEnable) {
+            // 未启用自定义字体，使用默认字体
+            document.documentElement.style.setProperty('--font-family', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif');
+            return;
+          }
+          
+          const fontType = String(window.siteConfig.fontType || 'online').toLowerCase();
+          let fontFamily = '';
+          
+          if (fontType === 'local') {
+            // 本地字体
+            const localName = String(window.siteConfig.fontLocalName || '').trim();
+            if (localName) {
+              // 去除可能的引号
+              const cleanName = localName.replace(/^["']|["']$/g, '');
+              fontFamily = `'${cleanName}', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif`;
+            }
+          } else {
+            // 在线字体
+            const onlineFontFamily = String(window.siteConfig.fontFamily || '').trim();
+            if (onlineFontFamily) {
+              // 去除可能的引号
+              const cleanFamily = onlineFontFamily.replace(/^["']|["']$/g, '');
+              fontFamily = `${cleanFamily}, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif`;
+            }
+          }
+          
+          if (fontFamily) {
+            document.documentElement.style.setProperty('--font-family', fontFamily);
+            // 确保 body 也应用字体（作为备用）
+            document.body.style.fontFamily = fontFamily;
+          }
+        };
+        
+        // 等待 DOM 加载完成后再执行
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', window.setFontFamily);
+        } else {
+          // DOM 已经加载完成，立即执行
+          window.setFontFamily();
+        }
+  </script>
+  {{ partial "artalk-global.html" . }}
+  
+  {{/* 弹窗公告组件 */}}
+  {{ if site.Params.popup.enable }}
+    {{ partial "components/popup.html" . }}
+    {{ with resources.Get "js/_popup.js" | minify | fingerprint }}
+      <script src="{{ .RelPermalink }}"></script>
+    {{ end }}
+  {{ end }}
+  
+  {{/* 链接卡片和跳转中转功能 */}}
+  {{ if or site.Params.linkCard.enable site.Params.linkCard.redirectPage }}
+    {{ with resources.Get "js/_link-card.js" | minify | fingerprint }}
+      <script src="{{ .RelPermalink }}"></script>
+    {{ end }}
+  {{ end }}
+</body>
+</html>

@@ -1,0 +1,36 @@
+# 内部知识库（仅本机构建，绝不上传到服务器）
+# 用法: hugo --config hugo.toml,config.internal.toml
+#       hugo server --config hugo.toml,config.internal.toml -D
+baseURL = "http://localhost:1314/"
+title = "内部知识库"
+contentDir = "internal/content"
+publishDir = "dist/internal"
+copyright = "内部资料 · 请勿外传"
+
+[menu]
+  [[menu.main]]
+    name = "首页"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "笔记"
+    url = "/posts/"
+    weight = 2
+
+[params]
+  author = "AlphaChow"
+  description = "内部知识库，仅本机可访问"
+  grayscaleMode = false
+
+  [params.footer]
+    custom = "内部资料 · 仅本机可访问"
+
+  [params.runningTime]
+    enable = false
+
+  [params.encryption]
+    enable = true
+    fullHint = "此篇为加密笔记，请输入密码查看"
+    partialHint = "此部分内容已加密，请输入密码查看"
+    wrongPasswordHint = "密码错误，请重试"

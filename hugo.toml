@@ -1,0 +1,325 @@
+baseURL = "https://alphachowai.com/"
+languageCode = "zh-cn"
+title = "AlphaChow AI"
+theme = "demius"
+
+defaultContentLanguage = "zh"
+hasCJKLanguage = true
+copyright = "Copyright © AlphaChow AI"
+rssLimit = 20
+ignoreLogs = ["warning-goldmark-raw-html"]
+
+ignoreFiles = [
+  "content/private/.*",
+  "vault-private/.*"
+]
+
+[pagination]
+  pagerSize = 12
+
+[permalinks]
+  posts = "/posts/:slug.html"
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[menu]
+  [[menu.main]]
+    name = "首页"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "文章"
+    url = "/posts/"
+    weight = 2
+
+[markup]
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 6
+    ordered = false
+
+[params]
+  author = "AlphaChow AI"
+  description = "AlphaChow AI 的个人博客"
+  mainSections = ["posts"]
+  summaryLength = 120
+  homeColumns = 2
+  grayscaleMode = false
+  darkMode = true
+  pjax = false
+  stickyHeader = true
+  postCardTransparentMode = false
+  postCardTransparentType = "full"
+  postPageTransparentMode = false
+  postPageTransparentType = "full"
+
+  [params.images]
+    avatar = "/img/avatar.png"
+    defaultCover = "/img/default-cover.webp"
+    fallbackImage = "/img/404.jpg"
+    favicon = "/img/favicon.ico"
+    logo = "/img/logo.png"
+
+  [params.font]
+    enable = false
+    type = "local"
+    onlineUrl = ""
+    fontFamily = ""
+    localName = ""
+    localPath = ""
+    localFormat = "ttf"
+
+  [params.homeBigImage]
+    enable = false
+    mode = "mode1"
+    title = ""
+    subtitle = ""
+
+    [params.homeBigImage.mode1]
+      backgroundImage = ""
+      arrowAnimation = false
+      scrollSpeed = 500
+      cardAnimation = true
+      cardAnimationSpeed = "normal"
+
+    [params.homeBigImage.mode2]
+      fullScreen = true
+      overlayOpacity = 0.3
+      customBackgroundImage = ""
+      typewriterEnable = false
+      typewriterSpeed = 100
+      typewriterDelay = 1000
+      typewriterCursor = true
+      typewriterLoop = false
+
+  [params.background]
+    effect_mode = "glass"
+    solid_color = "#4fc3f7"
+
+    [params.background.site]
+      enable = false
+      image = ""
+      blur = 0
+      brightness = 100
+      opacity = 80
+
+  [params.particleEffect]
+    enable = false
+    count = 80
+    color = ""
+    lineColor = ""
+    lineDistance = 150
+    speed = 0.5
+    radius = 1.5
+    interactive = true
+    zIndex = 0
+
+  [params.aside]
+    left = []
+    right = []
+    unifiedMode = false
+    transparentMode = false
+    wideMode = false
+
+    [params.aside.toc]
+      mobilePopupMode = "sidebar"
+
+  [params.postActions]
+    [params.postActions.like]
+      enable = false
+      icon = "fas fa-heart"
+      text = "点赞"
+
+    [params.postActions.share]
+      enable = false
+      icon = "fas fa-share-alt"
+      text = "分享"
+      platforms = []
+
+  [params.reward]
+    enable = false
+    buttonText = "感谢支持"
+    title = "如果觉得文章有帮助，可以请我喝杯咖啡"
+    wechat = ""
+    alipay = ""
+
+  [params.encryption]
+    enable = true
+    fullHint = "此文章已加密，请输入密码查看完整内容"
+    partialHint = "此部分内容已加密，请输入密码查看"
+    wrongPasswordHint = "密码错误，请重试"
+    popupTextColor = ""
+    popupBackgroundColor = ""
+    popupBackgroundImage = ""
+    partialPopupTextColor = ""
+    partialPopupBackgroundColor = ""
+    partialPopupBackgroundImage = ""
+
+  [params.danmaku]
+    enable = false
+    scope = "all"
+    speed = 3
+    fontSize = 16
+    opacity = 0.9
+    maxCount = 50
+    updateInterval = 30000
+    showAvatar = true
+    showTime = true
+    loop = true
+    randomPosition = true
+    colorful = true
+    antiOverlap = true
+
+  [params.carousel]
+    enable = false
+
+  [params.search]
+    engine = "local"
+    indexPath = "/index.json"
+
+  [params.video]
+    enable = true
+
+  [params.comment]
+    enable = false
+    system = "artalk"
+
+    [params.comment.artalk]
+      server = ""
+      site = ""
+      placeholder = "说点什么吧"
+      darkMode = true
+      locale = "zh-CN"
+      gravatar = "mp"
+      pageSize = 10
+      emoticons = true
+      heightLimit = 500
+      useLocal = true
+      cdnIndex = 0
+      cdn = []
+
+  [params.analytics]
+    [params.analytics.umami]
+      enable = false
+      scriptUrl = ""
+      websiteId = ""
+      showInDataPage = false
+      apiUrl = ""
+      useForPostViews = false
+
+  [params.data]
+    showTotalWords = true
+    showTotalPosts = true
+    showResponseTime = true
+    showLastUpdate = true
+    showCommentCount = false
+
+  [params.taxonomy]
+    colorMode = "random"
+    customColor = "#454141"
+
+  [params.links]
+    cardColorMode = "transparent"
+    cardCustomColor = "#f5f5f5"
+
+  [params.friendsCircle]
+    preGeneratedJsonUrl = ""
+    initialDisplayCount = 10
+    loadMoreCount = 10
+    cardColorMode = "transparent"
+    cardCustomColor = "#f5f5f5"
+    tabColorMode = "default"
+    tabCustomColor = "#667eea"
+    defaultArticleDays = 3
+    rssTimeout = 10000
+    rssCacheTime = 3600000
+
+  [params.booklist]
+    cardColorMode = "transparent"
+    cardCustomColor = "#f5f5f5"
+
+  [params.music]
+    metingApi = ""
+
+  [params.floatButtons]
+    position = "right"
+    showBackToTop = true
+    showThemeToggle = true
+    showSidebarToggle = true
+    showImmersiveMode = false
+
+  [params.floatMusicPlayer]
+    enabled = false
+
+  [params.footer]
+    custom = ""
+
+    [params.footer.runningTime]
+      enable = false
+      startDate = "2026-04-30"
+      prefix = "本站已运行"
+
+  [params.popup]
+    enable = false
+    zIndex = 10000
+
+  [params.topAnnouncement]
+    enable = false
+    mode = "custom"
+    height = 40
+    stickyWithHeader = false
+
+    [params.topAnnouncement.custom]
+      text = ""
+      link = ""
+      linkText = ""
+
+    [params.topAnnouncement.shuoshuo]
+      apiUrl = ""
+      count = 3
+      interval = 5000
+      transitionDuration = 1000
+      showAvatar = true
+      showTime = true
+      cacheDuration = 1800000
+      clickable = true
+      shuoshuoPageUrl = "/shuoshuo/"
+
+  [params.linkCard]
+    enable = false
+    cardMode = "external"
+    openInNewTab = true
+    showArticleInfo = true
+    showArticleTitle = true
+    showArticleDate = true
+    showArticleSummary = true
+    redirectPage = false
+    replaceWhitelist = []
+    pageWhitelist = []
+    elementWhitelist = []
+    redirectWhitelist = []
+
+    [params.linkCard.redirect]
+      pagePath = "/go/"
+      countdown = 3
+      showCountdown = true
+      showButton = true
+      safeMessage = "来自本站，请确认后跳转"
+
+  [params.devToolsProtection]
+    enabled = false
+    disableRightClick = false
+    disableTextSelection = false
+    detectDevTools = false
+    devToolsThreshold = 160
+    disableConsole = false
+    disableDebugger = false
+    preventIframe = false
+    onDevToolsOpen = "none"
+    redirectUrl = "/"
