@@ -1,0 +1,13 @@
+# AlphaChow 博客 —— 纯静态站点
+# 内容由本机构建后上传到 /mnt/data/hugo/live，此机不再运行 git 服务与 webhook。
+# 发布: 本机执行 blog.cmd publish
+
+alphachowai.com {
+	encode zstd gzip
+	root * /mnt/data/hugo/live
+	file_server
+}
+
+www.alphachowai.com {
+	redir https://alphachowai.com{uri} permanent
+}

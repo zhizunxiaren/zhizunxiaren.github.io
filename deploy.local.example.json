@@ -1,0 +1,10 @@
+{
+  "host": "119.91.129.185",
+  "user": "root",
+  "port": 22,
+  "ssh_key": "C:/Users/ChowHW/.ssh/alphachowai_server",
+  "domain": "https://alphachowai.com",
+  "hugo": "C:/Users/ChowHW/.workbuddy/binaries/hugo/hugo.exe",
+  "node_dir": "C:/Program Files/nodejs",
+  "internal_port": 1314
+}

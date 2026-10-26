@@ -1,5 +1,6 @@
 +++
 title = "Hello World"
+slug = "hello-world"
 date = 2026-04-30T15:30:00+08:00
 draft = false
 +++

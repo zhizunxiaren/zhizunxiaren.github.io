@@ -18,7 +18,7 @@ ignoreFiles = [
   pagerSize = 12
 
 [permalinks]
-  posts = "/posts/:slug.html"
+  posts = "/posts/:slug/"
 
 [taxonomies]
   tag = "tags"

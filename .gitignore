@@ -6,6 +6,9 @@ resources/_gen/
 # 依赖（首次使用需 npm install）
 node_modules/
 
+# 本机私有配置（含服务器地址与密钥路径，不进仓库）
+deploy.local.json
+
 # 系统与编辑器
 .hugo_build.lock
 .DS_Store
