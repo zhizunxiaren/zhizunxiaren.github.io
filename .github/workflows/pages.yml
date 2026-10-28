@@ -36,7 +36,10 @@ jobs:
           extended: true
 
       - name: Build
-        run: hugo --minify --baseURL "https://zhizunxiaren.github.io/"
+        run: |
+          # Hugo 调用 postcss 时找的是 PATH，不认 node_modules/.bin，必须显式加进去
+          export PATH="$PWD/node_modules/.bin:$PATH"
+          hugo --minify --baseURL "https://zhizunxiaren.github.io/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
