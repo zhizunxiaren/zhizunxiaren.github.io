@@ -4,6 +4,10 @@
   "port": 22,
   "ssh_key": "C:/Users/ChowHW/.ssh/alphachowai_server",
   "domain": "https://alphachowai.com",
+  "mirror_domain": "https://zhizunxiaren.github.io",
+  "mirror_branch": "main",
+  "mirror_wait_seconds": 150,
+  "github_token": "",
   "hugo": "C:/Users/ChowHW/.workbuddy/binaries/hugo/hugo.exe",
   "node_dir": "C:/Program Files/nodejs",
   "internal_port": 1314

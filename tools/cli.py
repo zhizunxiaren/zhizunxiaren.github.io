@@ -43,6 +43,7 @@ DEFAULTS = {
     "mirror_domain": "https://zhizunxiaren.github.io",
     "mirror_branch": "main",
     "mirror_wait_seconds": 150,
+    "github_token": "",
     "hugo": "hugo",
     "node_dir": "",
     "internal_port": 1314,
@@ -248,18 +249,28 @@ def push_mirror(conf, env):
         if code == 0 and out.strip() == "0":
             return None, "没有新提交，跳过推送"
 
-    # 代理环境下 github.com 会间歇性 502，重试三次
+    # 代理环境下 github.com 会间歇性失败，重试三次
     last = ""
     for attempt in range(1, 4):
         code, out = git(["push", "origin", "%s:%s" % (branch, branch)], env)
         if code == 0:
             return True, "已推送到 origin/%s" % branch
-        lines = [ln for ln in out.strip().splitlines() if ln.strip()]
-        last = lines[-1] if lines else "未知错误"
+        lines = [ln.strip() for ln in out.strip().splitlines() if ln.strip()]
+        # 挑信息量最大的那行，避免只截到 "and the repository exists." 这种尾巴
+        picked = [ln for ln in lines if ln.startswith(("fatal:", "error:", "ERROR:", "remote:"))]
+        last = (picked or lines or ["未知错误"])[-1]
         print("  推送失败（第 %d/3 次）: %s" % (attempt, last))
         if attempt < 3:
             time.sleep(4)
-    return False, "推送连续三次失败（多半是代理抖动），稍后手动执行 git push origin %s" % branch
+    return False, "推送连续三次失败（多半是网络/代理抖动），稍后手动执行 git push origin %s" % branch
+
+
+def github_token(conf):
+    """GitHub token：配置优先，其次环境变量。没有就匿名访问（60 次/小时，容易限流）。"""
+    return (conf.get("github_token")
+            or os.environ.get("GITHUB_TOKEN")
+            or os.environ.get("GH_TOKEN")
+            or "").strip()
 
 
 def wait_actions(conf, env, sha):
@@ -269,17 +280,31 @@ def wait_actions(conf, env, sha):
         return None, None
     api = ("https://api.github.com/repos/%s/%s/actions/runs?per_page=10"
            % (owner, repo))
+    actions_url = "https://github.com/%s/%s/actions" % (owner, repo)
+
+    headers = {"User-Agent": "alphachow-publish/1.0",
+               "Accept": "application/vnd.github+json"}
+    token = github_token(conf)
+    if token:
+        headers["Authorization"] = "Bearer " + token
+
     deadline = time.time() + int(conf.get("mirror_wait_seconds", 150))
     run = None
     last_status = ""
     while True:
         try:
-            req = urllib.request.Request(api, headers={
-                "User-Agent": "alphachow-publish/1.0",
-                "Accept": "application/vnd.github+json",
-            })
+            req = urllib.request.Request(api, headers=headers)
             with urllib.request.urlopen(req, timeout=20) as r:
                 data = json.loads(r.read().decode("utf-8", "replace"))
+        except urllib.error.HTTPError as e:
+            if e.code in (403, 429):
+                print("  ! GitHub API 限流（匿名访问每小时 60 次，出口 IP 共享时会耗尽）")
+                print("    → 跳过构建状态等待，请在网页确认: %s" % actions_url)
+                print("    → 想启用精确等待：在 deploy.local.json 填 \"github_token\"，")
+                print("      或设置环境变量 GITHUB_TOKEN（只需 public_repo 读权限）")
+            else:
+                print("  ! 查询 Actions 状态失败: HTTP %s" % e.code)
+            return None, None
         except Exception as e:  # noqa: BLE001
             print("  ! 查询 Actions 状态失败: %r" % e)
             return None, None
@@ -296,11 +321,11 @@ def wait_actions(conf, env, sha):
             if st != last_status:
                 print("  Actions 构建中（%s）..." % st)
                 last_status = st
-        elif time.time() > deadline:
-            print("  ! 没找到本次 commit 的构建任务（可能还没排队）")
-            return None, None
         if time.time() > deadline:
-            print("  ! 等待超时，构建可能仍在进行")
+            if run:
+                print("  ! 等待超时，构建可能仍在进行: %s" % run.get("html_url"))
+            else:
+                print("  ! 没找到本次 commit 的构建任务（可能还没排队）: %s" % actions_url)
             return None, run.get("html_url") if run else None
         time.sleep(6)
 
@@ -311,6 +336,7 @@ def verify_mirror(conf, env, sha, wait=True):
     if not domain:
         return True
 
+    conclusion = None
     if wait:
         print("[验证] 镜像站（等待 GitHub Actions）")
         conclusion, url = wait_actions(conf, env, sha)
@@ -330,6 +356,8 @@ def verify_mirror(conf, env, sha, wait=True):
         return False
     ok = status == 200
     print("  %s HTTP %d %s" % ("v" if ok else "x", status, domain + "/"))
+    if wait and ok and conclusion is None:
+        print("    ! 构建状态未知，此刻页面可能还是上一版（Actions 通常 30-60 秒）")
     return ok
 
 
