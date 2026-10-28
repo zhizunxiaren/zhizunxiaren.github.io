@@ -258,6 +258,9 @@ ignoreFiles = [
     enabled = false
 
   [params.footer]
+    # ICP 备案号：法律的硬要求，也是本项目的"唯一权威来源"。
+    # 改动时请同步更新 backup/ 下的备案记录与服务器 /etc/alphachowai/beian.html。
+    beian = "蜀ICP备2026008215号-1"
     custom = ""
 
     [params.footer.runningTime]

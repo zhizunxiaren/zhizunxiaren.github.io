@@ -24,6 +24,8 @@ copyright = "内部资料 · 请勿外传"
   grayscaleMode = false
 
   [params.footer]
+    # 内部站不公网访问，不展示 ICP 备案号（覆盖公开站的设置）
+    beian = ""
     custom = "内部资料 · 仅本机可访问"
 
   [params.runningTime]

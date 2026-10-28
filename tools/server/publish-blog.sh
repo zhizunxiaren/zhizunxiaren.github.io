@@ -16,24 +16,37 @@ KEEP_BACKUPS=5
 
 log() { printf '[publish] %s\n' "$*"; }
 
-inject_beian() {
+check_and_inject_beian() {
   local dir="$1"
-  if [ ! -f "$BEIAN_FILE" ]; then
-    log "警告: 缺少 $BEIAN_FILE，跳过备案号注入"
+
+  # 情况一：备案号已在构建时由 hugo.toml 的 params.footer.beian 渲染出来（当前默认）
+  local rendered
+  rendered=$(grep -rl 'ICP备' "$dir" --include='*.html' 2>/dev/null | wc -l || true)
+  if [ "${rendered:-0}" -gt 0 ]; then
+    log "备案号已由构建渲染（$rendered 个页面），无需注入"
     return 0
   fi
-  local beian
-  beian="$(cat "$BEIAN_FILE")"
-  export BEIAN="$beian"
-  local count
-  count=$(grep -rl 'data-alphachowai-beian-placeholder' "$dir" --include='*.html' 2>/dev/null | wc -l || true)
-  if [ "${count:-0}" -gt 0 ]; then
+
+  # 情况二：模板回退到占位符形式，这里兜底注入
+  local holders
+  holders=$(grep -rl 'data-alphachowai-beian-placeholder' "$dir" --include='*.html' 2>/dev/null | wc -l || true)
+  if [ "${holders:-0}" -gt 0 ]; then
+    if [ ! -f "$BEIAN_FILE" ]; then
+      log "错误: 需要注入备案号但缺少 $BEIAN_FILE，拒绝发布"
+      exit 4
+    fi
+    BEIAN="$(cat "$BEIAN_FILE")"
+    export BEIAN
     grep -rl 'data-alphachowai-beian-placeholder' "$dir" --include='*.html' 2>/dev/null \
       | xargs -r perl -0pi -e 's#<span data-alphachowai-beian-placeholder></span>#$ENV{BEIAN}#g'
-    log "备案号已注入 $count 个页面"
-  else
-    log "警告: 页面里没有备案号占位符"
+    log "备案号已兜底注入 $holders 个页面"
+    return 0
   fi
+
+  # 情况三：两者都没有 —— 备案号丢失，直接拒绝上线
+  log "错误: 构建产物中既无备案号也无占位符，按 ICP 合规要求拒绝发布"
+  log "      请检查 hugo.toml 中的 [params.footer] beian 以及 footer 模板"
+  exit 4
 }
 
 backup_live() {
@@ -90,7 +103,7 @@ tar xzf "$TARBALL" -C "$STAGE_DIR"
 [ -f "$STAGE_DIR/index.html" ] || { log "包里没有 index.html，拒绝发布"; exit 3; }
 log "已解包 $(du -sh "$STAGE_DIR" | cut -f1)"
 
-inject_beian "$STAGE_DIR"
+check_and_inject_beian "$STAGE_DIR"
 backup_live
 
 mkdir -p "$LIVE_DIR"
