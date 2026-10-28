@@ -22,14 +22,24 @@ blog.cmd status               :: 检查线上是否正常
 
 `blog.cmd publish` 会依次做：本地构建 → 打包 → SSH 上传 → 服务器注入备案号 → 切换线上目录 → 备份旧版本 → 重载 Caddy → 回验 HTTP 与备案号。
 
+## 仓库说明
+
+本仓库 = **公开站的源码**，远端是 `zhizunxiaren/zhizunxiaren.github.io`（GitHub Pages 的站点仓，因此必须公开）。
+
+- 推 `main` 后由 `.github/workflows/pages.yml` 用 Hugo 0.150.1 extended 构建并部署到 https://zhizunxiaren.github.io/
+- 正式主站仍是 https://alphachowai.com（自建服务器 + Caddy），由 `blog.cmd publish` 发布
+- `internal/` 是**另一个独立 git 仓库**，已被本仓库 `.gitignore` 排除，**永远不会出现在公开仓库里**
+- 老版本纯产物仓的内容保留在远端 `legacy-pages` 分支
+
 ## 目录结构
 
 ```
 hugo.toml                 公开站配置（baseURL=https://alphachowai.com/）
 config.internal.toml      内部站覆盖配置（叠加在 hugo.toml 之上）
 content/posts/            公开文章
-internal/content/posts/   内部笔记
+internal/                 内部笔记（独立私有仓库，被 .gitignore 排除）
 themes/demius/            主题，随仓库内置，不依赖外网
+.github/workflows/        GitHub Pages 自动构建部署
 dist/                     构建产物，不进仓库
 tools/cli.py              命令行工具
 tools/server/publish-blog.sh   服务器端发布脚本（部署在 /usr/local/bin/）
